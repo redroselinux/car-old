@@ -18,8 +18,7 @@ p_delete = subparsers.add_parser("delete", help="Uninstall a package")
 p_delete.add_argument("package", help="Package to delete")
 
 # update
-p_update = subparsers.add_parser("update", help="Update a package")
-p_update.add_argument("package", help="Package to update")
+p_update = subparsers.add_parser("update", help="Update system")
 
 # search
 p_search = subparsers.add_parser("search", help="Search for a package")
@@ -38,7 +37,7 @@ if args.command == "get":
 elif args.command == "delete":
     delete.main(args.package)
 elif args.command == "update":
-    update.main(args.package)
+    update.main()
 elif args.command == "search":
     search.main(args.package)
 elif args.command == "updatelist":
