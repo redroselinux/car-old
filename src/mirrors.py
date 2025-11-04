@@ -8,14 +8,22 @@ try:
         mirrors = f.read()
 except Exception:
     with open("/home/" + os.getlogin() + "/.config/mirrors.car", "w") as f:
-        f.write(""":base:
-install_script = https://raw.githubusercontent.com/crust-project/car-binary-storage/main/
-packagelist = https://raw.githubusercontent.com/crust-project/car/main/existing-packages.txt
+        f.write(""":main:
+install_script = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/
+packagelist = https://raw.githubusercontent.com/redroselinux/car/main/existing-packages.txt
+versions = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/existing-packages-versions.txt
+:end:
+
+:core:
+install_script = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/main/
+packagelist = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/main/existing-packages.txt
+versions = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/main/existing-packages-versions.txt
 :end:
                 """)
 
 install_script_places = []
 packagelist_places = []
+versions_places = []
 repos = []
 
 current_repo = None
@@ -32,6 +40,8 @@ for line in mirrors.strip().splitlines():
             install_script_places.append(current_data["install_script"])
         if "packagelist" in current_data:
             packagelist_places.append(current_data["packagelist"])
+        if "versions" in current_data:
+            versions_places.append(current_data["versions"])
         current_repo = None
         current_data = {}
     elif current_repo and "=" in line:
@@ -60,4 +70,3 @@ def fetch_all_packages(packagelist_places, max_threads=8):
         for r in results:
             all_packages.extend(r)
     return all_packages
-
