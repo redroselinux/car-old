@@ -6,6 +6,7 @@ import search
 import updatelist
 import init
 import listpkgs
+import info
 
 parser = argparse.ArgumentParser(description="A simple package manager")
 subparsers = parser.add_subparsers(dest="command", required=True)
@@ -34,6 +35,10 @@ p_search = subparsers.add_parser("init", help="Init Car")
 # list
 p_list = subparsers.add_parser("list", help="list installed packages")
 
+# info
+p_info = subparsers.add_parser("info", help="info about a package")
+p_info.add_argument("package", help="Package to show") 
+
 args = parser.parse_args()
 
 if args.command == "get":
@@ -50,3 +55,5 @@ elif args.command == "init":
     init.main()
 elif args.command == "list":
     listpkgs.main()
+elif args.command == "info":
+    info.main(args.package)
