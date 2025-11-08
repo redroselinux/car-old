@@ -149,8 +149,9 @@ def main(package, noconfirm=False):
         status("Installing", "ok")
         install_script.install()
 
-        installed_versions[package] = script_version
-        write_installed_versions(repro_path, installed_versions)
+        if not install_script.DoNotWriteVersion:
+            installed_versions[package] = script_version
+            write_installed_versions(repro_path, installed_versions)
 
         hooks.post_inst(package)
 
