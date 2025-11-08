@@ -2,6 +2,6 @@ example
 crust
 reskin
 vim-build
-vim-bin
 vim
 firefox
+fortisauris-terminal-lms
