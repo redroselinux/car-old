@@ -15,7 +15,6 @@ def main(package, noconfirm=False):
     # first check if the name is correct, autocorrect if not
     # using umbrella/autocorrect_package.py (unlicense)
     autocorrected = Autocorrect.main(package)
-    print(autocorrected)
     if autocorrected != package:
         package = autocorrected
     
@@ -54,7 +53,6 @@ def main(package, noconfirm=False):
                 f.write("\n".join(lines) + "\n")
 
         # go to /tmp
-        status("Going to /tmp", "info")
         os.chdir("/tmp/")
 
         # fetch all repos for the install script
@@ -62,7 +60,6 @@ def main(package, noconfirm=False):
 
         for mirror in mirrors.install_script_places:
             url = f"{mirror.rstrip('/')}/{package}/install_script"
-            status(f"Trying {url}", "info")
 
             result = os.system(f"curl -s -L -o install_script.py {url}")
 
@@ -72,17 +69,14 @@ def main(package, noconfirm=False):
             # github returns 404: Not Found in case the file does not exist,
             # so handle that case too
             if script != "404: Not Found":
-                status(f"Successfully fetched install script from: {url}", "success")
                 found = True
                 break
             else:
-                status(f"Failed to fetch from: {url}", "warning")
+                pass
 
         if not found:
             status("Failed to fetch install script from all mirrors", "error")
-            exit()
-
-        status("Reading install_script.py", "info")
+            exit(1)
 
         # import the script as a python library
         spec = importlib.util.spec_from_file_location("install_script", "/tmp/install_script.py")
@@ -127,13 +121,11 @@ def main(package, noconfirm=False):
 
         # install deps
         try:
-            status("Installing dependencies", "ok")
             install_script.deps()
         except Exception:pass
 
         # build
         try:
-            status("Building", "ok")
             install_script.build()
         except Exception:pass
 
@@ -160,7 +152,6 @@ def main(package, noconfirm=False):
             install_script.postinst()
 
         # clean up
-        status("Cleaning up")
         os.system("rm -f /tmp/install_script.py")
     except Exception:
         # crash, print exception and exit
