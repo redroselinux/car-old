@@ -6,3 +6,6 @@ vim-build
 vim
 firefox
 fortisauris-terminal-lms
+xz
+pkg-config
+python3
