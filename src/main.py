@@ -5,7 +5,7 @@ import update
 import search
 import updatelist
 import init
-import listpkgs
+import lspkgs
 import info
 
 parser = argparse.ArgumentParser(description="A simple package manager")
