@@ -8,7 +8,7 @@ Car is a package manager for Redrose Linux. It will also become a wrapper for ot
 - [x] Basic versioning
 - [ ] More advanced versioning
 - [x] Mirrors
-- [ ] Website with all packages from official repos
+- [x] Website with all packages from official repos
 - [ ] .car tarballs so installation is not only online
     - [ ] if the package argument of get ends with .car, install locally
 
