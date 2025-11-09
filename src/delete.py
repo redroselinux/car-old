@@ -8,7 +8,6 @@ console = Console()
 
 def main(package):
     autocorrected = Autocorrect.main(package)
-    print(autocorrected)
     if autocorrected != package:
         package = autocorrected
 
@@ -25,8 +24,12 @@ def main(package):
         status(f"Target not found: {package}", "error")
         return False
 
+    for i in repro.splitlines():
+        if i.startswith(package):
+            repro = repro.replace(i, "")
+
     with open(f"/home/{os.getlogin()}/.config/repro.car", "w") as f:
-        f.write("\n".join(l for l in repro.splitlines() if l.strip() != package))
+        f.write(repro)
 
     status(f"Uninstalling {package}...", "info")
     try:
