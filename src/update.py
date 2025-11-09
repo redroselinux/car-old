@@ -2,9 +2,9 @@ from status import status
 import mirrors
 import os
 import install
+import updatelist
 
-# credits to chatgpt for helping building this, i was seriously lost
-# keep this comment forever.
+# there was a credit to chatgpt, but i later found out i just had bad configs
 
 def parse_versions(data):
     result = {}
@@ -20,6 +20,7 @@ def main():
 
     versions_full = ""
     for i in mirrors.versions_places:
+        print(f"Fetching {i}")
         os.system(f"curl -s -L -o /tmp/versions {i}")
         with open("/tmp/versions", "r") as f:
             versions = f.read()
@@ -36,8 +37,10 @@ def main():
         if pkg in local_versions and local_versions[pkg] != ver:
             needs_update.append(pkg)
 
+    updatelist.main()
+
     if needs_update:
-        print(needs_update)
+        pass
     else:
         status("System up-to-date.", "ok")
 
