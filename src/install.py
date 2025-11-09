@@ -7,6 +7,7 @@ import mirrors
 import hooks
 import get_package_list
 import umbrella.autocorrect_package as Autocorrect
+import install
 
 # init rich console
 console = Console()
@@ -120,14 +121,19 @@ def main(package, noconfirm=False):
                 return
 
         # install deps
-        try:
-            install_script.deps()
-        except Exception:pass
+        if "deps" in script:
+            try:
+                install_script.deps()
+            except Exception:pass
+        if "car_deps" in script:
+            for i in install_script.car_deps:
+                install.main(i, noconfirm=True)
 
         # build
-        try:
-            install_script.build()
-        except Exception:pass
+        if "build" in script:
+            try:
+                install_script.build()
+            except Exception:pass
 
         # ask for confirmation
         # todo: make confirmation prompts better by mixing into one
@@ -141,7 +147,8 @@ def main(package, noconfirm=False):
         status("Installing", "ok")
         install_script.install()
 
-        if not install_script.DoNotWriteVersion:
+
+        if not "DoNotWriteVersion = True" in script:
             installed_versions[package] = script_version
             write_installed_versions(repro_path, installed_versions)
 
