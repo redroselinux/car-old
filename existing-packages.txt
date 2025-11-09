@@ -9,3 +9,5 @@ fortisauris-terminal-lms
 xz
 pkg-config
 python3
+ninja
+meson
