@@ -3,6 +3,10 @@ import mirrors
 import os
 import install
 import updatelist
+from rich.console import Console
+
+# init rich console
+console = Console()
 
 # there was a credit to chatgpt, but i later found out i just had bad configs
 
@@ -40,7 +44,16 @@ def main():
     updatelist.main()
 
     if needs_update:
-        pass
+        needs_update_str = ""
+        status("The following packages are going to be updated:")
+        for i in needs_update:
+            needs_update_str += i + ", "
+        print("     "+needs_update_str)
+        console.print("::", style="blue bold", end=" ")
+        sure = input("Are you sure? (Y/n) ")
+        if sure not in ("", "y", "Y"):
+            return
+
     else:
         status("System up-to-date.", "ok")
 
