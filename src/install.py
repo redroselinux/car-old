@@ -56,6 +56,8 @@ def main(package, noconfirm=False):
         # go to /tmp
         os.chdir("/tmp/")
 
+        status("Fetching package")
+
         # fetch all repos for the install script
         found = False
 
@@ -115,6 +117,11 @@ def main(package, noconfirm=False):
 
         # ask for confirmation
         if not noconfirm:
+            status("The following packages are going to be installed:")
+            print("     ", end="")
+            for i in install_script.car_deps:
+                print(i, end=", ")
+            print(package) # appending to the list did not work for some reason
             console.print("::", style="blue bold", end=" ")
             sure = input("Install dependencies and build? (Y/n) ")
             if sure not in ("", "y", "Y"):
