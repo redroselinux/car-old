@@ -1,0 +1,7 @@
+*/__pycache__/
+*/*.dist
+*/*build
+
+bin/
+*/main.bin
+bin/car
