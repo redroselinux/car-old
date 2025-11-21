@@ -16,11 +16,20 @@ console = Console()
 _installing = set()
 
 def main(package, noconfirm=False):
+    local = False
+    # check if package is local
+    if package.endswith(".car"):
+        os.system(f"unzip {package}")
+        os.chdir(package)
+        with open("install_script.py", "r") as f:
+            script = f.read()
+        local = True
     # first check if the name is correct, autocorrect if not
     # using umbrella/autocorrect_package.py (unlicense)
-    autocorrected = Autocorrect.main(package)
-    if autocorrected != package:
-        package = autocorrected
+    if not local:
+        autocorrected = Autocorrect.main(package)
+        if autocorrected != package:
+            package = autocorrected
     
     # Prevent circular dependencies and infinite loops
     if package in _installing:
@@ -28,8 +37,9 @@ def main(package, noconfirm=False):
     _installing.add(package)
     try:
         # save time fetching scripts, check if the package is in lists quickly
-        if get_package_list.main(package) != True:
-            return False
+        if not local:
+            if get_package_list.main(package) != True:
+                return False
         
         # main
         try:
@@ -62,35 +72,36 @@ def main(package, noconfirm=False):
                     f.write("\n".join(lines) + "\n")
 
             # go to /tmp
-            os.chdir("/tmp/")
+            if not local:
+                os.chdir("/tmp/")
+            
+                status("Fetching package")
 
-            status("Fetching package")
+                # fetch all repos for the install script
+                found = False
 
-            # fetch all repos for the install script
-            found = False
+                for mirror in mirrors.install_script_places:
+                    url = f"{mirror.rstrip('/')}/{package}/install_script"
 
-            for mirror in mirrors.install_script_places:
-                url = f"{mirror.rstrip('/')}/{package}/install_script"
+                    result = os.system(f"curl -s -L -o install_script.py {url}")
 
-                result = os.system(f"curl -s -L -o install_script.py {url}")
+                    with open("install_script.py", "r") as f:
+                        script = f.read()
 
-                with open("install_script.py", "r") as f:
-                    script = f.read()
+                    # github returns 404: Not Found in case the file does not exist,
+                    # so handle that case too
+                    if script != "404: Not Found":
+                        found = True
+                        break
+                    else:
+                        pass
 
-                # github returns 404: Not Found in case the file does not exist,
-                # so handle that case too
-                if script != "404: Not Found":
-                    found = True
-                    break
-                else:
-                    pass
-
-            if not found:
-                status("Failed to fetch install script from all mirrors", "error")
-                exit(1)
+                if not found:
+                    status("Failed to fetch install script from all mirrors", "error")
+                    exit(1)
 
             # import the script as a python library
-            spec = importlib.util.spec_from_file_location("install_script", "/tmp/install_script.py")
+            spec = importlib.util.spec_from_file_location("install_script", "install_script.py")
             install_script = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(install_script)
 
@@ -127,8 +138,9 @@ def main(package, noconfirm=False):
             if not noconfirm:
                 status("The following packages are going to be installed:")
                 print("     ", end="")
-                for i in install_script.car_deps:
-                    print(i, end=", ")
+                if "car_deps" in script:
+                    for i in install_script.car_deps:
+                        print(i, end=", ")
                 print(package) # appending to the list did not work for some reason
                 console.print("::", style="blue bold", end=" ")
                 sure = input("Install dependencies and build? (Y/n) ")
