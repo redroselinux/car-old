@@ -7,6 +7,7 @@ import updatelist
 import init
 import lspkgs
 import info
+import mirrors
 
 parser = argparse.ArgumentParser(description="A simple package manager")
 subparsers = parser.add_subparsers(dest="command", required=True)
