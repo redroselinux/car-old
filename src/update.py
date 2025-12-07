@@ -1,7 +1,8 @@
 from status import status
 import mirrors
-import os
 import install
+
+import os
 import updatelist
 from rich.console import Console
 
@@ -30,7 +31,7 @@ def main():
             versions = f.read()
         versions_full += versions + "\n"
 
-    with open(f"/home/{os.getlogin()}/.config/repro.car", "r") as f:
+    with open("/etc/repro.car", "r") as f:
         repro = f.read()
 
     repo_versions = parse_versions(versions_full)
