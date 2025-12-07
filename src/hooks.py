@@ -1,13 +1,14 @@
-import os
 import importlib.util
+import os
+
 import status
 
 def post_inst(package):
     status.status("Loading hooks")
     print("(1/?) Loading hooks")
 
-    hooks_file = f"/home/{os.getlogin()}/.config/car/post-inst-hooks"
-    
+    hooks_file = f"/etc/car/post-inst-hooks"
+
     if not os.path.exists(hooks_file):
         print(f"No hooks file found at {hooks_file}")
         return

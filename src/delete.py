@@ -1,6 +1,8 @@
 import os
 import sys
+
 from rich.console import Console
+
 from status import status
 import umbrella.autocorrect_package as Autocorrect
 
@@ -11,10 +13,10 @@ def main(package):
     if autocorrected != package:
         package = autocorrected
 
-    if not os.path.exists(f"/home/{os.getlogin()}/.config/repro.car"):
+    if not os.path.exists("/etc/repro.car"):
         status("No repro.car file. Creating", "warn")
-        os.makedirs(f"/home/{os.getlogin()}/.config", exist_ok=True)
-        open(f"/home/{os.getlogin()}/.config/repro.car", "w").close()
+        os.makedirs("/etc/car", exist_ok=True)
+        open("/etc/repro.car", "w").close()
         return False
 
     with open(f"/home/{os.getlogin()}/.config/repro.car") as f:
@@ -28,7 +30,7 @@ def main(package):
         if i.startswith(package):
             repro = repro.replace(i, "")
 
-    with open(f"/home/{os.getlogin()}/.config/repro.car", "w") as f:
+    with open("", "w") as f:
         f.write(repro)
 
     status(f"Uninstalling {package}...", "info")
