@@ -1,13 +1,14 @@
 from status import status
+
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 try:
-    with open("/home/" + os.getlogin() + "/.config/mirrors.car", "r") as f:
+    with open("/etc/mirrors.car", "r") as f:
         mirrors = f.read()
 except Exception:
-    with open("/home/" + os.getlogin() + "/.config/mirrors.car", "w") as f:
+    with open("/etc/mirrors.car", "w") as f:
         f.write(""":main:
 install_script = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/
 packagelist = https://raw.githubusercontent.com/redroselinux/car/main/existing-packages.txt
