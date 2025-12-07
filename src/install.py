@@ -2,6 +2,7 @@ import os
 import importlib.util
 from rich.console import Console
 import sys
+
 from status import status
 import mirrors
 import hooks
@@ -44,7 +45,7 @@ def main(package, noconfirm=False):
         # main
         try:
             # save installed package
-            repro_path = "/home/" + os.getlogin() + "/.config/repro.car"
+            repro_path = "/etc/repro.car"
 
             def read_installed_versions(path):
                 versions = {}
