@@ -1,9 +1,9 @@
 import os
+
 import updatelist
 
 def main():
-    user = os.getlogin()
-    base_path = f"/home/{user}/.config/car"
+    base_path = f"/etc/car"
     
     print(f"Creating {base_path}/")
     os.makedirs(f"{base_path}/hooks", exist_ok=True)
