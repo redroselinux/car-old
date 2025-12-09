@@ -1,15 +1,9 @@
-from status import status
-
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+from status import status
 
-try:
-    with open("/etc/mirrors.car", "r") as f:
-        mirrors = f.read()
-except Exception:
-    with open("/etc/mirrors.car", "w") as f:
-        f.write(""":main:
+mirrors = """:main:
 install_script = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/
 packagelist = https://raw.githubusercontent.com/redroselinux/car/main/existing-packages.txt
 versions = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/existing-packages-versions.txt
@@ -20,7 +14,14 @@ install_script = https://raw.githubusercontent.com/redroselinux/car-coreutils-re
 packagelist = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/main/existing-packages.txt
 versions = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/main/existing-packages-versions.txt
 :end:
-                """)
+"""
+
+# Write mirrors only if they do not exist
+for path in ["/etc/mirrors.car", "/home/user/.config/mirrors.car"]:
+    if not os.path.exists(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write(mirrors)
 
 install_script_places = []
 packagelist_places = []
@@ -49,7 +50,7 @@ for line in mirrors.strip().splitlines():
         key, value = line.split("=", 1)
         current_data[key.strip()] = value.strip()
 
-def _fetch_one(url):
+def fetch_one(url):
     print("fetch " + url)
     try:
         result = subprocess.run(
@@ -67,7 +68,7 @@ def _fetch_one(url):
 def fetch_all_packages(packagelist_places, max_threads=8):
     all_packages = []
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
-        results = executor.map(_fetch_one, packagelist_places)
+        results = executor.map(fetch_one, packagelist_places)
         for r in results:
             all_packages.extend(r)
     return all_packages
