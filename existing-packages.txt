@@ -16,3 +16,4 @@ cairo
 pango
 gdk-pixbuf
 gtk4
+zenity
