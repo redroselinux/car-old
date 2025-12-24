@@ -10,10 +10,4 @@ xz
 pkg-config
 python3
 ninja
-meson
-glib
-cairo
-pango
-gdk-pixbuf
-gtk4
 zenity
