@@ -11,3 +11,4 @@ pkg-config
 python3
 ninja
 zenity
+xfce4-terminal
