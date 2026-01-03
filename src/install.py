@@ -21,11 +21,15 @@ _installing = set()
 def main(package, noconfirm=False):
     local = False
     # check if package is local
-    if package.endswith(".car"):
+    if package.endswith(".car") or package.endswith(".car.zip"):
+        status("Local package!")
         os.system(f"unzip {package}")
-        os.chdir(package)
+        os.chdir(package.strip(".zip").strip(".car"))
         with open("install_script.py", "r") as f:
             script = f.read()
+        for i in script.splitlines():
+            if i.startswith("#NAME: "):
+                package = i.replace("#NAME: ", "")
         local = True
     # first check if the name is correct, autocorrect if not
     # using umbrella/autocorrect_package.py (unlicense)
