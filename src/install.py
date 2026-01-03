@@ -126,6 +126,10 @@ def main(package, noconfirm=False):
             installed_version = installed_versions.get(package)
             if installed_version is not None and installed_version == script_version:
                 status(f"{package} is up to date ({script_version}). Exiting.", "ok")
+                status(
+                    f"You can use\n   sudo car delete {package} && sudo car get {package}"
+                )
+                status("to reinstall it")
                 return
             elif installed_version is not None and installed_version != script_version:
                 status(
