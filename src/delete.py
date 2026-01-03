@@ -10,6 +10,9 @@ console = Console()
 
 
 def main(package):
+    print(
+        "note that this function is not finished, and it does not delete all package files."
+    )
     autocorrected = Autocorrect.main(package)
     if autocorrected != package:
         package = autocorrected
