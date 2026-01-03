@@ -31,7 +31,7 @@ def main(package):
         if i.startswith(package):
             repro = repro.replace(i, "")
 
-    with open("", "w") as f:
+    with open("/etc/repro.car", "w") as f:
         f.write(repro)
 
     status(f"Uninstalling {package}...", "info")
