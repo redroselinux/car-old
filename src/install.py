@@ -86,7 +86,7 @@ def main(package, noconfirm=False):
                 for mirror in mirrors.install_script_places:
                     url = f"{mirror.rstrip('/')}/{package}/install_script"
 
-                    result = os.system(f"curl -s -L -o install_script.py {url}")
+                    os.system(f"curl -s -L -o install_script.py {url}")
 
                     with open("install_script.py", "r") as f:
                         script = f.read()
