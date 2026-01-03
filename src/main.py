@@ -10,7 +10,11 @@ import search
 import update
 import updatelist
 
-parser = argparse.ArgumentParser(description="A simple package manager")
+parser = argparse.ArgumentParser(
+    prog="car",
+    description="A simple package manager for Redrose Linux. Documentation is available at: https://redroselinux.miraheze.org/wiki/Car_Package_Manager",
+    epilog="Authors: Juraj Kollár (mostypc123) <mostypc7@gmail.com>",
+)
 subparsers = parser.add_subparsers(dest="command", required=True)
 
 # install

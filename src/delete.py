@@ -3,12 +3,16 @@ import sys
 
 from rich.console import Console
 
-from status import status
 import umbrella.autocorrect_package as Autocorrect
+from status import status
 
 console = Console()
 
+
 def main(package):
+    print(
+        "note that this function is not finished, and it does not delete all package files."
+    )
     autocorrected = Autocorrect.main(package)
     if autocorrected != package:
         package = autocorrected
@@ -19,7 +23,7 @@ def main(package):
         open("/etc/repro.car", "w").close()
         return False
 
-    with open(f"/home/{os.getlogin()}/.config/repro.car") as f:
+    with open("/etc/repro.car") as f:
         repro = f.read()
 
     if package not in repro:
@@ -30,7 +34,7 @@ def main(package):
         if i.startswith(package):
             repro = repro.replace(i, "")
 
-    with open("", "w") as f:
+    with open("/etc/repro.car", "w") as f:
         f.write(repro)
 
     status(f"Uninstalling {package}...", "info")
