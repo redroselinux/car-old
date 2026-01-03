@@ -145,11 +145,19 @@ def main(package, noconfirm=False):
             # ask for confirmation
             if not noconfirm:
                 status("The following packages are going to be installed:")
-                print("     ", end="")
+                if "description" not in script:
+                    description = "No description defined."
+                else:
+                    description = install_script.description
+                print(
+                    f"    {package}={install_script.version} - {description}"
+                )  # appending to the list did not work for some reason
                 if "car_deps" in script:
-                    for i in install_script.car_deps:
-                        print(i, end=", ")
-                print(package)  # appending to the list did not work for some reason
+                    if len(install_script.car_deps) != 0:
+                        print("    dependencies: ", end="")
+                        for i in install_script.car_deps:
+                            print(f"{i}, ", end="")
+                        print()
                 if "outdated = True" in script:
                     if (
                         package != "example"
