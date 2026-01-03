@@ -1,20 +1,22 @@
-import os
 import importlib.util
-from rich.console import Console
+import os
 import sys
 
-from status import status
-import mirrors
-import hooks
+from rich.console import Console
+
 import get_package_list
-import umbrella.autocorrect_package as Autocorrect
+import hooks
 import install
+import mirrors
+import umbrella.autocorrect_package as Autocorrect
+from status import status
 
 # init rich console
 console = Console()
 
 # Track packages currently being installed to prevent circular dependencies
 _installing = set()
+
 
 def main(package, noconfirm=False):
     local = False
@@ -31,7 +33,7 @@ def main(package, noconfirm=False):
         autocorrected = Autocorrect.main(package)
         if autocorrected != package:
             package = autocorrected
-    
+
     # Prevent circular dependencies and infinite loops
     if package in _installing:
         return
@@ -41,7 +43,7 @@ def main(package, noconfirm=False):
         if not local:
             if get_package_list.main(package) != True:
                 return False
-        
+
         # main
         try:
             # save installed package
@@ -75,7 +77,7 @@ def main(package, noconfirm=False):
             # go to /tmp
             if not local:
                 os.chdir("/tmp/")
-            
+
                 status("Fetching package")
 
                 # fetch all repos for the install script
@@ -102,7 +104,9 @@ def main(package, noconfirm=False):
                     exit(1)
 
             # import the script as a python library
-            spec = importlib.util.spec_from_file_location("install_script", "install_script.py")
+            spec = importlib.util.spec_from_file_location(
+                "install_script", "install_script.py"
+            )
             install_script = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(install_script)
 
@@ -124,7 +128,10 @@ def main(package, noconfirm=False):
                 status(f"{package} is up to date ({script_version}). Exiting.", "ok")
                 return
             elif installed_version is not None and installed_version != script_version:
-                status(f"New version available for {package}: {installed_version} -> {script_version}. Reinstalling.", "warn")
+                status(
+                    f"New version available for {package}: {installed_version} -> {script_version}. Reinstalling.",
+                    "warn",
+                )
             elif installed_version is None:
                 if not os.path.isfile(repro_path):
                     status("No repro.car file. Creating", "warn")
@@ -142,7 +149,12 @@ def main(package, noconfirm=False):
                 if "car_deps" in script:
                     for i in install_script.car_deps:
                         print(i, end=", ")
-                print(package) # appending to the list did not work for some reason
+                print(package)  # appending to the list did not work for some reason
+                if "outdated = True" in script:
+                    if (
+                        package != "example"
+                    ):  # example is set to be outdated for demonstration
+                        status(f'The package "{package}" is outdated! ', "error")
                 console.print("::", style="blue bold", end=" ")
                 sure = input("Install dependencies and build? (Y/n) ")
                 if sure not in ("", "y", "Y"):
@@ -152,7 +164,8 @@ def main(package, noconfirm=False):
             if "deps" in script:
                 try:
                     install_script.deps()
-                except Exception:pass
+                except Exception:
+                    pass
             if "car_deps" in script:
                 for i in install_script.car_deps:
                     install.main(i, noconfirm=True)
@@ -161,7 +174,8 @@ def main(package, noconfirm=False):
             if "build" in script:
                 try:
                     install_script.build()
-                except Exception:pass
+                except Exception:
+                    pass
 
             # ask for confirmation
             # todo: make confirmation prompts better by mixing into one
@@ -174,7 +188,6 @@ def main(package, noconfirm=False):
             # install, required hook
             status("Installing", "ok")
             install_script.install()
-
 
             if not "DoNotWriteVersion = True" in script:
                 installed_versions[package] = script_version
@@ -197,7 +210,10 @@ def main(package, noconfirm=False):
         except KeyboardInterrupt:
             # keyboard interrupt, suggest cleaning up
             status("Installation interrupted", "error")
-            status("There might be some files that were installed, but not removed. You can remove them manually.", "warn")
+            status(
+                "There might be some files that were installed, but not removed. You can remove them manually.",
+                "warn",
+            )
             status("If you want to remove them, run the following command:", "warn")
             status("sudo car delete " + package, "warn")
             sys.exit(1)
