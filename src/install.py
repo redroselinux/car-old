@@ -31,6 +31,26 @@ def main(package, noconfirm=False):
             if i.startswith("#NAME: "):
                 package = i.replace("#NAME: ", "")
         local = True
+    if package.endswith("vroom"):
+        status("easter egg :3")
+        status("imma explain what this does")
+        status("here we unzip the package")
+        status(f"> unzip {package}")
+        os.system(f"unzip {package}")
+        status("now thats done lets go in there")
+        os.chdir(package.strip(".vroom"))
+        status('ill run this in python: os.chdir(package.strip(".zip").strip(".car"))')
+        status("now im reading the install script")
+        with open("install_script.py", "r") as f:
+            script = f.read()
+        status("and lets see whats its name")
+        for i in script.splitlines():
+            if i.startswith("#NAME: "):
+                package = i.replace("#NAME: ", "")
+                status(f"oooh so the name is {package}")
+        status("and lets set local to true")
+        local = True
+        status("baii :3")
     # first check if the name is correct, autocorrect if not
     # using umbrella/autocorrect_package.py (unlicense)
     if not local:
