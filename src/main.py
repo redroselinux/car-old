@@ -1,24 +1,23 @@
 import argparse
-import install
+
 import delete
-import update
-import search
-import updatelist
+import finstall
+import info
 import init
 import lspkgs
-import info
 import mirrors
+import search
+import update
+import updatelist
 
 parser = argparse.ArgumentParser(description="A simple package manager")
 subparsers = parser.add_subparsers(dest="command", required=True)
 
 # install
-p_install = subparsers.add_parser("get", help="Install a package")
-p_install.add_argument("package", help="Package to install")
+p_install = subparsers.add_parser("get", help="Install packages")
+p_install.add_argument("packages", nargs="+", help="Packages to install")
 p_install.add_argument(
-    "--noconfirm",
-    action="store_true",
-    help="Install without confirmation"
+    "--noconfirm", action="store_true", help="Install without confirmation"
 )
 
 # delete
@@ -48,7 +47,7 @@ p_info.add_argument("package", help="Package to show")
 args = parser.parse_args()
 
 if args.command == "get":
-    install.main(noconfirm=args.noconfirm, package=args.package)
+    finstall.main(packages=args.packages, noconfirm=args.noconfirm)
 elif args.command == "delete":
     delete.main(args.package)
 elif args.command == "update":
