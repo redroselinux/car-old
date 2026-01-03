@@ -1,7 +1,6 @@
 example
 example2
 crust
-reskin
 vim-build
 vim
 firefox
