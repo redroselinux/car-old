@@ -172,7 +172,7 @@ def main(package, noconfirm=False):
                     ):  # example is set to be outdated for demonstration
                         status(f'The package "{package}" is outdated! ', "error")
                 console.print("::", style="blue bold", end=" ")
-                sure = input("Install dependencies and build? (Y/n) ")
+                sure = input("Install? (Y/n) ")
                 if sure not in ("", "y", "Y"):
                     return
 
@@ -192,14 +192,6 @@ def main(package, noconfirm=False):
                     install_script.build()
                 except Exception:
                     pass
-
-            # ask for confirmation
-            # todo: make confirmation prompts better by mixing into one
-            if not noconfirm:
-                console.print("::", style="blue bold", end=" ")
-                sure = input("Install? (Y/n) ")
-                if sure not in ("", "y", "Y"):
-                    return
 
             # install, required hook
             status("Installing", "ok")
