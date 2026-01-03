@@ -7,7 +7,9 @@ def main():
     base_path = "/etc/car"
 
     print(f"Creating {base_path}/")
+    print(f"Creating {base_path}/hooks")
     os.makedirs(f"{base_path}/hooks", exist_ok=True)
+    print(f"Creating {base_path}/saves")
     os.makedirs(f"{base_path}/saves", exist_ok=True)
 
     hook_path = f"{base_path}/hooks/check_core.py"
@@ -29,4 +31,5 @@ def main():
     print(f"Created hook script at {hook_path}")
     print(f"Created post-inst-hooks file at {post_inst_path}")
 
+    print("Updating packagelist")
     updatelist.main()
