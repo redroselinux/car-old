@@ -8,6 +8,7 @@ def main():
 
     print(f"Creating {base_path}/")
     os.makedirs(f"{base_path}/hooks", exist_ok=True)
+    os.makedirs(f"{base_path}/saves", exist_ok=True)
 
     hook_path = f"{base_path}/hooks/check_core.py"
     with open(hook_path, "w") as f:

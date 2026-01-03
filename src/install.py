@@ -211,6 +211,16 @@ def main(package, noconfirm=False):
             if hasattr(install_script, "postinst"):
                 install_script.postinst()
 
+            # save extra files to delete
+            if "delete_files = " in script:
+                try:
+                    with open(f"/etc/car/saves/{package}", "w") as f:
+                        for i in install_script.delete_files:
+                            f.write(f"{i}\n")
+                        status("Saved files for deletion if delete is run", "ok")
+                except Exception as e:
+                    print(f"error {e}")
+
             # clean up
             os.system("sudo rm -f /tmp/install_script.py")
         except Exception:
