@@ -3,10 +3,11 @@ import sys
 
 from rich.console import Console
 
-from status import status
 import umbrella.autocorrect_package as Autocorrect
+from status import status
 
 console = Console()
+
 
 def main(package):
     autocorrected = Autocorrect.main(package)
@@ -19,7 +20,7 @@ def main(package):
         open("/etc/repro.car", "w").close()
         return False
 
-    with open(f"/home/{os.getlogin()}/.config/repro.car") as f:
+    with open("/etc/repro.car") as f:
         repro = f.read()
 
     if package not in repro:
