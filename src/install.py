@@ -153,10 +153,14 @@ def main(package, noconfirm=False):
                     f"    {package}={install_script.version} - {description}"
                 )  # appending to the list did not work for some reason
                 if "car_deps" in script:
+                    counter = 1
                     if len(install_script.car_deps) != 0:
                         print("    dependencies: ", end="")
                         for i in install_script.car_deps:
-                            print(f"{i}, ", end="")
+                            if counter != len(install_script.car_deps):
+                                print(f"{i}, ", end="")
+                            else:
+                                print(f"{i}", end="")
                         print()
                 if "outdated = True" in script:
                     if (
