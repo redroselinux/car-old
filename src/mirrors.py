@@ -1,8 +1,8 @@
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
-from status import status
 
+# mirrors config (written only if missing)
 mirrors = """:main:
 install_script = https://raw.githubusercontent.com/redroselinux/car-binary-storage/main/
 packagelist = https://raw.githubusercontent.com/redroselinux/car/main/existing-packages.txt
@@ -16,59 +16,67 @@ versions = https://raw.githubusercontent.com/redroselinux/car-coreutils-repo/mai
 :end:
 """
 
-# Write mirrors only if they do not exist
-for path in ["/etc/mirrors.car", "/home/user/.config/mirrors.car"]:
+# write mirrors only if they do not exist
+for path in ["/etc/mirrors.car", os.path.expanduser("~/.config/mirrors.car")]:
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as f:
             f.write(mirrors)
 
-install_script_places = []
-packagelist_places = []
-versions_places = []
+install_script_places = []  # list of (repo, url)
+packagelist_places = []  # list of (repo, url)
+versions_places = []  # list of (repo, url)
 repos = []
 
 current_repo = None
 current_data = {}
 
+# parse mirrors config
 for line in mirrors.strip().splitlines():
     line = line.strip()
+
     if line.startswith(":") and line.endswith(":") and line != ":end:":
         current_repo = line.strip(":")
         repos.append(current_repo)
         current_data = {}
+
     elif line == ":end:":
         if "install_script" in current_data:
-            install_script_places.append(current_data["install_script"])
+            install_script_places.append((current_repo, current_data["install_script"]))
         if "packagelist" in current_data:
-            packagelist_places.append(current_data["packagelist"])
+            packagelist_places.append((current_repo, current_data["packagelist"]))
         if "versions" in current_data:
-            versions_places.append(current_data["versions"])
+            versions_places.append((current_repo, current_data["versions"]))
         current_repo = None
         current_data = {}
+
     elif current_repo and "=" in line:
         key, value = line.split("=", 1)
         current_data[key.strip()] = value.strip()
 
-def fetch_one(url):
+
+def fetch_one(repo, url):
     print("fetch " + url)
     try:
         result = subprocess.run(
             ["curl", "-fsSL", url],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         packages = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-        repo_name = url.strip().split("/")[-2] if "/" in url else "unknown"
-        return [f"{repo_name}/{pkg}" for pkg in packages]
+        return [f"{repo}/{pkg}" for pkg in packages]
     except subprocess.CalledProcessError:
         return []
+
 
 def fetch_all_packages(packagelist_places, max_threads=8):
     all_packages = []
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
-        results = executor.map(fetch_one, packagelist_places)
+        results = executor.map(
+            lambda x: fetch_one(x[0], x[1]),
+            packagelist_places,
+        )
         for r in results:
             all_packages.extend(r)
     return all_packages
