@@ -257,7 +257,7 @@ def main(package, noconfirm=False):
                 "warn",
             )
             status("If you want to remove them, run the following command:", "warn")
-            status("sudo car delete " + package, "warn")
+            print(" > ")
             sys.exit(1)
     finally:
         # Always remove from installing set, even if installation fails
