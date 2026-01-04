@@ -6,7 +6,9 @@ import info
 import init
 import lspkgs
 import mirrors
+import nocarinit
 import search
+import status
 import update
 import updatelist
 
@@ -49,6 +51,11 @@ p_info = subparsers.add_parser("info", help="Info about a package")
 p_info.add_argument("package", help="Package to show")
 
 args = parser.parse_args()
+
+if args.command != "init":
+    if nocarinit.main():
+        status.status("Car was not initalized. Run:\n > car init", "error")
+        exit()
 
 if args.command == "get":
     finstall.main(packages=args.packages, noconfirm=args.noconfirm)
