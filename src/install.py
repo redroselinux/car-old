@@ -108,7 +108,8 @@ def main(package, noconfirm=False):
                 found = False
 
                 for mirror in mirrors.install_script_places:
-                    url = f"{mirror.rstrip('/')}/{package}/install_script"
+                    repo, mirror_url = mirror
+                    url = f"{mirror_url.rstrip('/')}/{package}/install_script"
 
                     os.system(f"curl -s -L -o install_script.py {url}")
 
