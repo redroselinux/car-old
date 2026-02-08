@@ -1,4 +1,5 @@
 import os
+import time
 
 from rich.console import Console
 from rich.progress import BarColumn, Progress, TextColumn
@@ -10,6 +11,9 @@ console = Console()
 
 
 def main(package):
+    # start timer
+    start = time.perf_counter()
+
     autocorrected = Autocorrect.main(package)
     if autocorrected != package:
         package = autocorrected
@@ -27,9 +31,11 @@ def main(package):
         status(f"Target not found: {package}", "error")
         return False
 
-    for i in repro.splitlines():
-        if i.startswith(package):
-            repro = repro.replace(i, "")
+    repro_lines = [
+        i for i in repro.splitlines()
+        if i.strip() and i != package and not i.startswith(package + "=")
+    ]
+    repro = "\n".join(repro_lines) + "\n" if repro_lines else ""
 
     with open("/etc/repro.car", "w") as f:
         f.write(repro)
@@ -59,3 +65,8 @@ def main(package):
 
         os.system(f"rm -f /usr/bin/{package}")
         progress.advance(task)
+
+    # end timer
+    end = time.perf_counter()
+    took = end - start
+    status(f"took {took:.5f} seconds")
