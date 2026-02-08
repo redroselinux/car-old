@@ -1,6 +1,7 @@
 import importlib.util
 import os
 import sys
+import time
 
 from rich.console import Console
 
@@ -128,6 +129,9 @@ def main(package, noconfirm=False):
                     status("Failed to fetch install script from all mirrors", "error")
                     exit(1)
 
+            # start timer
+            start = time.perf_counter()
+
             # import the script as a python library
             spec = importlib.util.spec_from_file_location(
                 "install_script", "install_script.py"
@@ -208,8 +212,14 @@ def main(package, noconfirm=False):
                 except Exception:
                     pass
             if "car_deps" in script:
+                with open("/etc/repro.car", "r") as f:
+                    repro = f.read()
+
                 for i in install_script.car_deps:
-                    install.main(i, noconfirm=True)
+                    if i not in repro:
+                        install.main(i, noconfirm=True)
+                    else:
+                        status(f"{i} is already installed")
 
             # build
             if "build" in script:
@@ -244,6 +254,12 @@ def main(package, noconfirm=False):
 
             # clean up
             os.system("sudo rm -f /tmp/install_script.py")
+
+            # end timer
+            end = time.perf_counter()
+            took = end - start
+
+            status(f"took {took:.5f} seconds (fetching not counted)")
         except Exception:
             # crash, print exception and exit
             console.print("::", style="red", end=" ")
